@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 9, 2017 2:02:39 PM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="Courier" table="courier" catalog="courier" optimistic-lock="version">
+        <id name="courierId" type="java.lang.Integer">
+            <column name="courier_id" />
+            <generator class="identity" />
+        </id>
+        <property name="courierName" type="string">
+            <column name="courier_name" length="20" not-null="true" />
+        </property>
+        <property name="courierPhone" type="string">
+            <column name="courier_phone" length="20" not-null="true" />
+        </property>
+        <property name="courierStatus" type="int">
+            <column name="courier_status" not-null="true" />
+        </property>
+        <property name="courierBusy" type="int">
+            <column name="courier_busy" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

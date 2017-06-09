@@ -30,7 +30,7 @@ import courierDM.Userprofile;
 
 
 @Entity
-public class userUI extends JPanel{
+public class clientUI extends JPanel{
 
 	/**
 	 * 
@@ -41,13 +41,13 @@ public class userUI extends JPanel{
 	private JPanel client;
 	private JTextField txt_search;
 	private JTextField textField;
-	private ArrayList<Userprofile> prof;
+	private ArrayList<Client> cl;
 	/**
 	 * Launch the application.
 	
 	 * Create the application.
 	 */
-	public userUI(JFrame frame) {
+	public clientUI(JFrame frame) {
 		client = new JPanel();
 		client.setLayout(null);
 		frame.getContentPane().add(client, "name_2138240631062768");
@@ -88,7 +88,7 @@ public class userUI extends JPanel{
 			new Object[][] {
 			},
 			new String[] {
-				"User ID", "Name", "Username", "Email", "Phone", "Role"
+				"Client Id", "Client Name", "Street", "Avenue", "Phone", "Email"
 			}
 		));
 		loadTable();
@@ -96,29 +96,26 @@ public class userUI extends JPanel{
 		JButton btnEdit = new JButton("Edit");
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					Userprofile detail = new Userprofile();
+					Client detail = new Client();
 					String action = "edit";
 				   int row = table.getSelectedRow();
-				   
 				   if(row<0){
-					   JOptionPane.showMessageDialog(frame, "Please select the row you want to edit");
-				   }else{
-					 
+					   JOptionPane.showMessageDialog(frame, "Please selecte the row to Edit");
+				   }else{  
+				   
 				   row = table.convertRowIndexToView(row);
-				   detail.setUserId(prof.get(row).getUserId());
-				   detail.setFirstName(prof.get(row).getFirstName());
-				   detail.setUserName(prof.get(row).getUserName());
-				   detail.setUserPassword(prof.get(row).getUserPassword());
-				   detail.setUserEmail(prof.get(row).getUserEmail());
-				   detail.setUserPhone(prof.get(row).getUserPhone());
-				   detail.setUserRole(prof.get(row).getUserRole());
-		           
+				   detail.setClientId(cl.get(row).getClientId());
+				   detail.setClientName(cl.get(row).getClientName());
+				   detail.setClientStreet(cl.get(row).getClientStreet());
+				   detail.setClientAve(cl.get(row).getClientAve());
+				   detail.setClientPhone(cl.get(row).getClientPhone());
+				   detail.setClientEmail(cl.get(row).getClientEmail());	   
 				   
 				   frame.getContentPane().removeAll();
-					frame.getContentPane().add(new editUser(frame, detail, action));
+				   frame.getContentPane().add(new editClient(frame, detail, action));
 					frame.getContentPane().repaint();
 					frame.getContentPane().validate();
-				   } 
+				   }
 			}
 		});
 		btnEdit.setBounds(505, 379, 97, 25);
@@ -129,8 +126,8 @@ public class userUI extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				String action = "add";
 				frame.getContentPane().removeAll();
-				Userprofile profile = new Userprofile();
-				frame.getContentPane().add(new editUser(frame, profile, action));
+				Client client = new Client();
+				frame.getContentPane().add(new editClient(frame, client, action));
 				frame.getContentPane().repaint();
 				frame.getContentPane().validate();
 			}
@@ -142,9 +139,6 @@ public class userUI extends JPanel{
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
-				
-				
 				Configuration cfg = new Configuration();
 				cfg.configure("hibernate.cfg.xml");
 				SessionFactory sf = cfg.buildSessionFactory();
@@ -153,31 +147,35 @@ public class userUI extends JPanel{
 				
 				int row = table.getSelectedRow();
 				
-				if(row<0){
-					JOptionPane.showMessageDialog(frame, "Please Select the row you want to delete");
+				if(row<0)
+				{
+					JOptionPane.showMessageDialog(frame, "Please selecte the row to delete");
 				}else{
-				Object[] options = {"Yes",
-                "No"};
-				int n = JOptionPane.showOptionDialog(frame,
-			    "Would you like to Delete the record? ",
-			    "Delete Client",
-			    JOptionPane.YES_NO_CANCEL_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,
-			    options,
-			    options[1]);
-		
-				if(n==0){
-					row = table.convertRowIndexToView(row);
-					int id = ((Integer) table.getModel().getValueAt(row,0));
-					   
-					Userprofile usDel =(Userprofile) s.get(Userprofile.class, new Integer(id));
-					s.delete(usDel);
-					s.flush();
-					tx.commit();
-					s.close();
-					loadTable();
-					}
+				
+					Object[] options = {"Yes",
+                    "No"};
+			int n = JOptionPane.showOptionDialog(frame,
+		    "Would you like to Delete the record? ",
+		    "Delete Client",
+		    JOptionPane.YES_NO_CANCEL_OPTION,
+		    JOptionPane.QUESTION_MESSAGE,
+		    null,
+		    options,
+		    options[1]);
+			
+			
+			if(n==0){
+				
+				row = table.convertRowIndexToView(row);
+				int id = ((Integer) table.getModel().getValueAt(row,0));
+				   
+				Client clDel =(Client) s.get(Client.class, new Integer(id));
+				s.delete(clDel);
+				s.flush();
+				tx.commit();
+				s.close();
+				loadTable();
+				}
 				}
 			}
 		});
@@ -196,27 +194,20 @@ public class userUI extends JPanel{
 			SessionFactory sf = cfg.buildSessionFactory();
 			Session s = sf.openSession();
 			Transaction tx = s.beginTransaction();
-			Client cl = new Client();
-			prof  =  (ArrayList<Userprofile>) s.createQuery("from Userprofile")
+			cl  =  (ArrayList<Client>) s.createQuery("from Client")
 					.list();
-					System.out.println(prof.size());
+					System.out.println(cl.size());
 					s.flush();
 					tx.commit();
 					s.close();
 			Object[] rowData = new Object[6];
-			for(int i=0; i<prof.size(); i++){
-			rowData[0] = prof.get(i).getUserId();
-			rowData[1] = prof.get(i).getFirstName();
-			rowData[2] = prof.get(i).getUserName();
-			rowData[3] = prof.get(i).getUserEmail();
-			rowData[4] = prof.get(i).getUserPhone();
-			if(prof.get(i).getUserRole()==1){
-			rowData[5] = "Superuser";
-			}else if(prof.get(i).getUserRole()==2){
-				rowData[5] = "Ordertaker";
-			}else{
-				rowData[5] = "Not Active";
-			}
+			for(int i=0; i<cl.size(); i++){
+			rowData[0] = cl.get(i).getClientId();
+			rowData[1] = cl.get(i).getClientName();
+			rowData[2] = cl.get(i).getClientStreet();
+			rowData[3] = cl.get(i).getClientAve();
+			rowData[4] = cl.get(i).getClientPhone();
+			rowData[5] = cl.get(i).getClientEmail();
 			model.addRow(rowData);
 			}	
 	}

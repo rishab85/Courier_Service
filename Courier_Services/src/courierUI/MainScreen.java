@@ -86,7 +86,7 @@ public class MainScreen extends JFrame{
 	public MainScreen(Userprofile profile) {
 		this.profile = profile;
 		JFrame currentFrame = this;
-		set();
+//		set();
 		
 		System.out.println(profile.getUserRole());
 		initialize();
@@ -123,7 +123,7 @@ public class MainScreen extends JFrame{
 		mntmClientInformation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
-				frame.getContentPane().add(new ClientUI(frame));
+				frame.getContentPane().add(new clientUI(frame));
 				frame.getContentPane().repaint();
 				frame.getContentPane().validate();
 				
@@ -159,6 +159,14 @@ public class MainScreen extends JFrame{
 		mnMaintian.add(mntmIntersectionInformation);
 		
 		JMenuItem mntmCourierInformation = new JMenuItem("Courier Information");
+		mntmCourierInformation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new courierUI(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnMaintian.add(mntmCourierInformation);
 		
 		JMenu mnReport = new JMenu("Report");

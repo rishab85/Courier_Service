@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+
+	<table-filter match-catalog="courier" match-name="client" />
+	<table-filter match-catalog="courier" match-name="delivery_rate" />
+	<table-filter match-catalog="courier" match-name="userprofile" />
+	<table-filter match-name="courier" match-catalog="courier"></table-filter>
+</hibernate-reverse-engineering>

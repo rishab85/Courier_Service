@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -94,7 +95,7 @@ public class deliveryRate extends JPanel{
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.getContentPane().removeAll();
-				frame.getContentPane().add(new ClientUI(frame));
+				frame.getContentPane().add(new clientUI(frame));
 				frame.getContentPane().repaint();
 				frame.getContentPane().validate();
 			}
@@ -149,6 +150,8 @@ public class deliveryRate extends JPanel{
 		s.flush();
 		tx.commit();
 		s.close();
+		
+			JOptionPane.showMessageDialog(frame, "Information Updated Succefully");
 		}
 	}
 	

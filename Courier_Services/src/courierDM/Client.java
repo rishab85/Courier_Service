@@ -1,5 +1,6 @@
 package courierDM;
-// Generated Jun 8, 2017 1:16:38 AM by Hibernate Tools 4.3.1.Final
+// default package
+// Generated Jun 9, 2017 12:10:45 AM by Hibernate Tools 4.3.1.Final
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

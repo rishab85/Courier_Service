@@ -25,12 +25,13 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 import courierDM.Client;
+import courierDM.Courier;
 import courierDM.Userprofile;
 
 
 
 @Entity
-public class userUI extends JPanel{
+public class courierUI extends JPanel{
 
 	/**
 	 * 
@@ -38,57 +39,42 @@ public class userUI extends JPanel{
 
 	private JFrame frame;
 	private JTable table;
-	private JPanel client;
-	private JTextField txt_search;
+	private JPanel courier;
 	private JTextField textField;
-	private ArrayList<Userprofile> prof;
+	private ArrayList<Courier> driver;
 	/**
 	 * Launch the application.
 	
 	 * Create the application.
 	 */
-	public userUI(JFrame frame) {
-		client = new JPanel();
-		client.setLayout(null);
-		frame.getContentPane().add(client, "name_2138240631062768");
+	public courierUI(JFrame frame) {
+		courier = new JPanel();
+		courier.setLayout(null);
+		frame.getContentPane().add(courier, "name_2138240631062768");
 		
-		JLabel lblClientInformation = new JLabel("Client Information");
+		JLabel lblClientInformation = new JLabel("Courier Information");
 		lblClientInformation.setForeground(Color.LIGHT_GRAY);
 		lblClientInformation.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		lblClientInformation.setBounds(48, 13, 209, 37);
-		client.add(lblClientInformation);
-		
-		txt_search = new JTextField();
-		txt_search.setColumns(10);
-		txt_search.setBounds(131, 63, 220, 30);
-		client.add(txt_search);
-		
-		JLabel lblClientId = new JLabel("Client Id");
-		lblClientId.setBounds(48, 70, 78, 16);
-		client.add(lblClientId);
+		courier.add(lblClientInformation);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(48, 110, 772, 2);
-		client.add(separator_1);
-		
-		JButton btnSearch = new JButton("Search");
-		btnSearch.setBounds(363, 66, 97, 25);
-		client.add(btnSearch);
+		courier.add(separator_1);
 		
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(48, 139, 772, 227);
-		client.add(scrollPane);
+		courier.add(scrollPane);
 		
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		table.setRowHeight(40);
-		
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
 			new String[] {
-				"User ID", "Name", "Username", "Email", "Phone", "Role"
+				"Courier ID", "Courier Name", "Phone", "Status", "Available"
 			}
 		));
 		loadTable();
@@ -96,7 +82,7 @@ public class userUI extends JPanel{
 		JButton btnEdit = new JButton("Edit");
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-					Userprofile detail = new Userprofile();
+					Courier detail = new Courier();
 					String action = "edit";
 				   int row = table.getSelectedRow();
 				   
@@ -105,24 +91,23 @@ public class userUI extends JPanel{
 				   }else{
 					 
 				   row = table.convertRowIndexToView(row);
-				   detail.setUserId(prof.get(row).getUserId());
-				   detail.setFirstName(prof.get(row).getFirstName());
-				   detail.setUserName(prof.get(row).getUserName());
-				   detail.setUserPassword(prof.get(row).getUserPassword());
-				   detail.setUserEmail(prof.get(row).getUserEmail());
-				   detail.setUserPhone(prof.get(row).getUserPhone());
-				   detail.setUserRole(prof.get(row).getUserRole());
+
 		           
+				   detail.setCourierId(driver.get(row).getCourierId());
+				   detail.setCourierName(driver.get(row).getCourierName());
+				   detail.setCourierPhone(driver.get(row).getCourierPhone());
+				   detail.setCourierStatus(driver.get(row).getCourierStatus());
+				   detail.setCourierBusy(driver.get(row).getCourierBusy());
 				   
 				   frame.getContentPane().removeAll();
-					frame.getContentPane().add(new editUser(frame, detail, action));
+					frame.getContentPane().add(new editCourier(frame, detail, action));
 					frame.getContentPane().repaint();
 					frame.getContentPane().validate();
 				   } 
 			}
 		});
-		btnEdit.setBounds(505, 379, 97, 25);
-		client.add(btnEdit);
+		btnEdit.setBounds(478, 379, 97, 25);
+		courier.add(btnEdit);
 		
 		JButton btnAddNew = new JButton("Add New");
 		btnAddNew.addActionListener(new ActionListener() {
@@ -135,16 +120,12 @@ public class userUI extends JPanel{
 				frame.getContentPane().validate();
 			}
 		});
-		btnAddNew.setBounds(614, 379, 97, 25);
-		client.add(btnAddNew);
+		btnAddNew.setBounds(587, 379, 97, 25);
+		courier.add(btnAddNew);
 		
-		JButton btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				
-				
-				
+		JButton btnStatus = new JButton("Change Status");
+		btnStatus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {	
 				Configuration cfg = new Configuration();
 				cfg.configure("hibernate.cfg.xml");
 				SessionFactory sf = cfg.buildSessionFactory();
@@ -154,35 +135,53 @@ public class userUI extends JPanel{
 				int row = table.getSelectedRow();
 				
 				if(row<0){
-					JOptionPane.showMessageDialog(frame, "Please Select the row you want to delete");
+					JOptionPane.showMessageDialog(frame, "Please Select the row you want to edit.");
 				}else{
-				Object[] options = {"Yes",
-                "No"};
-				int n = JOptionPane.showOptionDialog(frame,
-			    "Would you like to Delete the record? ",
-			    "Delete Client",
-			    JOptionPane.YES_NO_CANCEL_OPTION,
-			    JOptionPane.QUESTION_MESSAGE,
-			    null,
-			    options,
-			    options[1]);
 		
-				if(n==0){
+				
 					row = table.convertRowIndexToView(row);
 					int id = ((Integer) table.getModel().getValueAt(row,0));
 					   
-					Userprofile usDel =(Userprofile) s.get(Userprofile.class, new Integer(id));
-					s.delete(usDel);
-					s.flush();
-					tx.commit();
-					s.close();
-					loadTable();
+					Courier cour =(Courier) s.get(Courier.class, new Integer(id));
+					
+//					if(cour.getCourierStatus()==0){
+//						String active = "Not Active";
+//					}else{
+//						String active = "Active";
+//					}
+					String active = "Active";
+					if(cour.getCourierStatus()==0){
+						active = "Not Active";
+					}
+					Object[] possibilities = {"Not Active", "Active"};
+					String ans = (String)JOptionPane.showInputDialog(
+					                    frame,
+					                    "Select courier Status:\n",
+					                    "Courier Status",
+					                    JOptionPane.PLAIN_MESSAGE,
+					                    null,
+					                    possibilities,
+					                    active);
+					
+					if(ans.isEmpty()|| ans==null){
+						System.out.println("process end");
+					}else{
+						if(ans == "Not Active"){
+							cour.setCourierStatus(0);
+						}else{
+							cour.setCourierStatus(1);
+						}
+						s.update(cour);
+						s.flush();
+						tx.commit();
+						s.close();
+						loadTable();
+						}
 					}
 				}
-			}
 		});
-		btnDelete.setBounds(723, 379, 97, 25);
-		client.add(btnDelete);	
+		btnStatus.setBounds(696, 379, 124, 25);
+		courier.add(btnStatus);	
 		
 	}
 
@@ -197,26 +196,30 @@ public class userUI extends JPanel{
 			Session s = sf.openSession();
 			Transaction tx = s.beginTransaction();
 			Client cl = new Client();
-			prof  =  (ArrayList<Userprofile>) s.createQuery("from Userprofile")
+			driver  =  (ArrayList<Courier>) s.createQuery("from Courier")
 					.list();
-					System.out.println(prof.size());
+					System.out.println(driver.size());
 					s.flush();
 					tx.commit();
 					s.close();
 			Object[] rowData = new Object[6];
-			for(int i=0; i<prof.size(); i++){
-			rowData[0] = prof.get(i).getUserId();
-			rowData[1] = prof.get(i).getFirstName();
-			rowData[2] = prof.get(i).getUserName();
-			rowData[3] = prof.get(i).getUserEmail();
-			rowData[4] = prof.get(i).getUserPhone();
-			if(prof.get(i).getUserRole()==1){
-			rowData[5] = "Superuser";
-			}else if(prof.get(i).getUserRole()==2){
-				rowData[5] = "Ordertaker";
+			for(int i=0; i<driver.size(); i++){
+			rowData[0] = driver.get(i).getCourierId();
+			rowData[1] = driver.get(i).getCourierName();
+			rowData[2] = driver.get(i).getCourierPhone();
+			if(driver.get(i).getCourierStatus()==1){
+				rowData[3] = "Active";
+				if(driver.get(i).getCourierBusy()==0){
+					rowData[4] = "Yes";
+				}else{
+					rowData[4] = "No";
+				}
 			}else{
-				rowData[5] = "Not Active";
+				rowData[3] = "Not Active";
+				rowData[4] = "No";
 			}
+			
+
 			model.addRow(rowData);
 			}	
 	}
