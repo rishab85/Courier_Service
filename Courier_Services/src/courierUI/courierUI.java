@@ -114,8 +114,8 @@ public class courierUI extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				String action = "add";
 				frame.getContentPane().removeAll();
-				Userprofile profile = new Userprofile();
-				frame.getContentPane().add(new editUser(frame, profile, action));
+				Courier courier = new Courier();
+				frame.getContentPane().add(new editCourier(frame, courier, action));
 				frame.getContentPane().repaint();
 				frame.getContentPane().validate();
 			}

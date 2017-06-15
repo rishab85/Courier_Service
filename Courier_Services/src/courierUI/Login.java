@@ -32,8 +32,11 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class Login {
+public class Login{
 
 	private JFrame frame;
 	private JTextField user_name;
@@ -43,6 +46,7 @@ public class Login {
 	private JLabel lblerror;
 	private Userprofile profile = new Userprofile();
 	private ArrayList<Userprofile> list;
+	private Boolean userBlocked = false;
 	/**
 	 * Launch the application.
 	 * @throws Exception 
@@ -53,7 +57,7 @@ public class Login {
 			public void run() {
 				try {
 					Login window = new Login();
-					window.frame.setVisible(true);
+					window.getFrame().setVisible(true);
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -70,7 +74,8 @@ public class Login {
 	 * Create the application.
 	 */
 	public Login() {
-		initialize();
+		initialize();	
+		
 	}
 	
 	
@@ -79,31 +84,31 @@ public class Login {
 	 */
 	private void initialize() {
 		ScreenSize size = new ScreenSize();
-		frame = new JFrame();
+		setFrame(new JFrame());
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screenSize.getWidth();
 		int height = (int) screenSize.getHeight();
-		frame.setBounds(size.x, size.y, size.ScreenWidth, size.ScreenHeight);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		getFrame().setBounds(size.x, size.y, size.ScreenWidth, size.ScreenHeight);
+		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getFrame().getContentPane().setLayout(null);
 		
 		user_name = new JTextField();
 		user_name.setBounds(288, 161, 296, 35);
-		frame.getContentPane().add(user_name);
+		getFrame().getContentPane().add(user_name);
 		user_name.setColumns(10);
 		
 		password = new JPasswordField();
 		password.setBounds(288, 270, 296, 35);
-		frame.getContentPane().add(password);
+		getFrame().getContentPane().add(password);
 		password.setColumns(10);
 		
 		JLabel lblUserName = new JLabel("Password");
 		lblUserName.setBounds(288, 241, 91, 16);
-		frame.getContentPane().add(lblUserName);
+		getFrame().getContentPane().add(lblUserName);
 		
 		JLabel label = new JLabel("User Name");
 		label.setBounds(288, 134, 91, 16);
-		frame.getContentPane().add(label);
+		getFrame().getContentPane().add(label);
 		
 		JButton btn_login = new JButton("Login");
 		
@@ -112,6 +117,7 @@ public class Login {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				try {
+					
 					validation();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -123,18 +129,18 @@ public class Login {
 			}
 		});
 		btn_login.setBounds(471, 360, 109, 35);
-		frame.getContentPane().add(btn_login);
+		getFrame().getContentPane().add(btn_login);
 		
 		lblAcmeCourier = new JLabel("ACME COURIER SERVICE");
 		lblAcmeCourier.setFont(new Font("Tw Cen MT Condensed Extra Bold", Font.PLAIN, 22));
 		lblAcmeCourier.setBounds(330, 37, 195, 35);
-		frame.getContentPane().add(lblAcmeCourier);
+		getFrame().getContentPane().add(lblAcmeCourier);
 		
 		lblerror = new JLabel("");
 		lblerror.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 13));
 		lblerror.setForeground(Color.RED);
 		lblerror.setBounds(288, 90, 399, 16);
-		frame.getContentPane().add(lblerror);
+		getFrame().getContentPane().add(lblerror);
 		
 	}
 	
@@ -152,10 +158,14 @@ public class Login {
 		}
 		else if(check(user,pass)){
 		lblerror.setText("");
-		frame.dispose();
+		getFrame().dispose();
 		MainScreen main = new MainScreen(profile);
 		main.frame.setVisible(true);
-		}else{
+		}else if(!check(user,pass)&&userBlocked==true){
+			lblerror.setText("Your account has been blocked by Administrator");
+			userBlocked = false;
+		}
+		else{
 			lblerror.setText("You entered the wrong username or password");
 		}
 	}
@@ -179,8 +189,10 @@ public class Login {
 		System.out.println(list.size());
 		if(list.size()>0){
 			if(list.get(0).getUserRole()==0){
+				userBlocked = true;
 				return false;
 			}else{
+				userBlocked = false;
 				profile.setUserId(list.get(0).getUserId());
 				profile.setFirstName(list.get(0).getFirstName());
 				profile.setUserName(list.get(0).getUserName());
@@ -193,5 +205,13 @@ public class Login {
 		}else{
 			return false;
 		}
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void setFrame(JFrame frame) {
+		this.frame = frame;
 	}
 }

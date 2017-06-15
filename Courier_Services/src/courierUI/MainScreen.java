@@ -1,6 +1,7 @@
 package courierUI;
 
 import java.awt.EventQueue;
+import static java.awt.event.InputEvent.CTRL_DOWN_MASK;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -15,14 +16,18 @@ import javax.swing.JOptionPane;
 
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerDateModel;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JSeparator;
+import javax.swing.JSpinner;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import java.awt.event.ActionListener;
@@ -36,12 +41,18 @@ import org.hibernate.cfg.Configuration;
 
 import courierDM.Userprofile;
 import courierDM.Client;
+import courierDM.DeliveryTicket;
 
 import javax.swing.JScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Date;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.SystemColor;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @Entity
 public class MainScreen extends JFrame{
@@ -77,6 +88,8 @@ public class MainScreen extends JFrame{
 	private JTextField username;
 	private JTextField phone;
 	private JTextField email;
+	private JTextField test;
+	private String comb;
 	/**
 	 * Launch the application.
 
@@ -85,7 +98,7 @@ public class MainScreen extends JFrame{
 	 */
 	public MainScreen(Userprofile profile) {
 		this.profile = profile;
-		JFrame currentFrame = this;
+//		JFrame currentFrame = this;
 //		set();
 		
 		System.out.println(profile.getUserRole());
@@ -108,16 +121,42 @@ public class MainScreen extends JFrame{
 		menuBar.add(mnOrder);
 		
 		JMenuItem mntmCreateNew = new JMenuItem("Create New");
+		mntmCreateNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				DeliveryTicket ticket = new DeliveryTicket();
+				frame.getContentPane().add(new createTicket(frame, ticket, "add"));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnOrder.add(mntmCreateNew);
+		mntmCreateNew.setAccelerator(KeyStroke.getKeyStroke('N', CTRL_DOWN_MASK));
 		
-		JMenuItem menuItem = new JMenuItem("New menu item");
-		mnOrder.add(menuItem);
+		JMenuItem mntmTodaysOrder = new JMenuItem("Pending Orders");
+		mntmTodaysOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new markTicket(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
+		mnOrder.add(mntmTodaysOrder);
+		
+		JMenuItem mntmDeliveredOrders = new JMenuItem("Delivered Orders");
+		mntmDeliveredOrders.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new deliveredTicket(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
+		mnOrder.add(mntmDeliveredOrders);
 		
 		JMenu mnMaintian = new JMenu("Maintian");
 		menuBar.add(mnMaintian);
-		
-		JMenuItem mntmDeliveryTicket = new JMenuItem("Delivery Ticket");
-		mnMaintian.add(mntmDeliveryTicket);
 		
 		JMenuItem mntmClientInformation = new JMenuItem("Client Information");
 		mntmClientInformation.addActionListener(new ActionListener() {
@@ -131,6 +170,8 @@ public class MainScreen extends JFrame{
 		});
 		mnMaintian.add(mntmClientInformation);
 		
+		mntmClientInformation.setAccelerator(KeyStroke.getKeyStroke('C', CTRL_DOWN_MASK));
+		
 	if(profile.getUserRole()==1){
 		JMenuItem mntmUserInformation = new JMenuItem("User Information");
 		mntmUserInformation.addActionListener(new ActionListener() {
@@ -142,7 +183,7 @@ public class MainScreen extends JFrame{
 			}
 		});
 		mnMaintian.add(mntmUserInformation);
-		
+		mntmUserInformation.setAccelerator(KeyStroke.getKeyStroke('U', CTRL_DOWN_MASK));
 		
 		JMenuItem mntmDeliveryRate = new JMenuItem("Delivery Rate");
 		mntmDeliveryRate.addActionListener(new ActionListener() {
@@ -154,6 +195,7 @@ public class MainScreen extends JFrame{
 			}
 		});
 		mnMaintian.add(mntmDeliveryRate);
+		mntmDeliveryRate.setAccelerator(KeyStroke.getKeyStroke('R', CTRL_DOWN_MASK));
 	}
 		JMenuItem mntmIntersectionInformation = new JMenuItem("Intersection Information");
 		mnMaintian.add(mntmIntersectionInformation);
@@ -168,6 +210,7 @@ public class MainScreen extends JFrame{
 			}
 		});
 		mnMaintian.add(mntmCourierInformation);
+		mntmCourierInformation.setAccelerator(KeyStroke.getKeyStroke('D', CTRL_DOWN_MASK));
 		
 		JMenu mnReport = new JMenu("Report");
 		menuBar.add(mnReport);
@@ -182,16 +225,37 @@ public class MainScreen extends JFrame{
 		mnReport.add(mntmGenerateBill);
 		
 		JMenu mnLogout = new JMenu("Logout");
+		mnLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		menuBar.add(mnLogout);
+		
+		JMenuItem mntmLogout = new JMenuItem("Logout");
+		mntmLogout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				profile =null;
+				frame.dispose();
+				Login login = new Login();
+				login.getFrame().setVisible(true);
+			}
+		});
+		mnLogout.add(mntmLogout);
 		frame.getContentPane().setLayout(new CardLayout(0, 0));
 		
 		JLabel user_name = new JLabel("New label");
-		user_name.setBounds(1090, 13, 80, 16);
+		user_name.setFont(new Font("Tahoma", Font.BOLD, 15));
+		user_name.setBounds(999, 13, 141, 16);
 		user_name.setText(profile.getFirstName());
 		
 		JLabel lblLoggedInAs = new JLabel("Logged in as : ");
-		lblLoggedInAs.setBounds(993, 13, 85, 16);
+		lblLoggedInAs.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblLoggedInAs.setBounds(899, 13, 97, 16);
 		
+		
+		
+
 		
 		/****** Welcome screen *********/
 		
@@ -215,6 +279,74 @@ public class MainScreen extends JFrame{
 		
 		
 		loadScreen(welcome);
+		
+		JLabel lblOrPressCtrl = new JLabel("OR PRESS Ctrl + N");
+		lblOrPressCtrl.setForeground(SystemColor.textInactiveText);
+		lblOrPressCtrl.setFont(new Font("Tahoma", Font.BOLD, 17));
+		lblOrPressCtrl.setBounds(476, 444, 163, 34);
+		welcome.add(lblOrPressCtrl);
+		
+//		Calendar cal = Calendar.getInstance();
+//		Date date = (Date) cal.getTime();
+//		SpinnerDateModel sm = new SpinnerDateModel(date, null, null, Calendar.MINUTE);
+
+//		JSpinner spinner = new JSpinner(sm);
+//		JSpinner.DateEditor de = new JSpinner.DateEditor(spinner, "hh:mm a");
+//		de.getTextField().setEditable( true );
+//		spinner.setBounds(32, 548, 163, 34);
+//		spinner.setEditor(de);
+//		welcome.add(spinner);
+		
+		JButton btnStartOrder = new JButton("Start Order");
+		btnStartOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				DeliveryTicket ticket = new DeliveryTicket();
+				frame.getContentPane().add(new createTicket(frame, ticket, "add"));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
+		btnStartOrder.setBounds(503, 389, 114, 42);
+		welcome.add(btnStartOrder);
+		
+		test = new JTextField();
+		test.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(!isNum(String.valueOf(e.getKeyChar()))){
+					e.consume();
+				}else{
+				if(comb == null){
+					comb = String.valueOf(e.getKeyChar());
+				}else{
+					if(!test.getText().isEmpty()){
+						comb = test.getText() + e.getKeyChar();
+					}else{
+						comb = String.valueOf(e.getKeyChar());
+								
+					}
+				}
+				int con = Integer.parseInt(comb);
+					if(comb.length()>2){
+						comb = comb.substring(0, 2);
+						e.consume();
+						
+					}else if(con>60){
+						JOptionPane.showMessageDialog(frame, "Number more than 60 is not allowed");
+						test.setText("");
+						comb = null;
+						e.consume();
+					}
+				}
+				System.out.println(comb);
+			}
+			
+		});
+		test.setBounds(193, 551, 116, 22);
+//		welcome.add(test);
+		test.setColumns(10);
 		
 		
 		JPanel editUser = new JPanel();
@@ -366,5 +498,9 @@ public class MainScreen extends JFrame{
 		tx.commit();
 		s.close();
 		}
+	}
+	
+	public Boolean isNum(String str){
+		return str.matches("-?\\d+(\\.\\d+)?");
 	}
 }

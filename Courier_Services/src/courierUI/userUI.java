@@ -52,7 +52,7 @@ public class userUI extends JPanel{
 		client.setLayout(null);
 		frame.getContentPane().add(client, "name_2138240631062768");
 		
-		JLabel lblClientInformation = new JLabel("Client Information");
+		JLabel lblClientInformation = new JLabel("User Information");
 		lblClientInformation.setForeground(Color.LIGHT_GRAY);
 		lblClientInformation.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		lblClientInformation.setBounds(48, 13, 209, 37);

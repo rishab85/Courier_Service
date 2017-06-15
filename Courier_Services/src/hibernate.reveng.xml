@@ -7,4 +7,7 @@
 	<table-filter match-catalog="courier" match-name="delivery_rate" />
 	<table-filter match-catalog="courier" match-name="userprofile" />
 	<table-filter match-name="courier" match-catalog="courier"></table-filter>
+	<table-filter match-name="delivery_ticket"
+		match-catalog="courier">
+	</table-filter>
 </hibernate-reverse-engineering>

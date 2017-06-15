@@ -10,5 +10,6 @@
   <mapping class="courierDM.DeliveryRate"/>
   <mapping class="courierDM.Client"/>
   <mapping class="courierDM.Courier"/>
+  <mapping class="courierDM.DeliveryTicket"/>
  </session-factory>
 </hibernate-configuration>

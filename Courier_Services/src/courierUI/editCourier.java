@@ -39,7 +39,6 @@ public class editCourier extends JPanel{
 	private JTextField courierName;
 	private JTextField phone;
 	private JComboBox comboBox;
-	private JLabel lblAvailable;
 	private JLabel lblYes;
 	
 	public editCourier(JFrame frame, Courier profile, String action) {
@@ -132,13 +131,15 @@ public class editCourier extends JPanel{
 		comboBox.setBounds(48, 257, 154, 30);
 		courierEdit.add(comboBox);
 		
-		lblAvailable = new JLabel("Available");
+		if(action=="edit"){
+		JLabel lblAvailable = new JLabel("Available");
 		lblAvailable.setBounds(275, 228, 56, 16);
 		courierEdit.add(lblAvailable);
+		}
 		
 		lblYes = new JLabel("");
 		lblYes.setFont(new Font("Arial", Font.BOLD, 18));
-		lblYes.setBounds(275, 257, 88, 30);
+		lblYes.setBounds(275, 257, 209, 30);
 		courierEdit.add(lblYes);
 	
 		
@@ -149,15 +150,15 @@ public class editCourier extends JPanel{
 			phone.setText(profile.getCourierPhone());
 			if(profile.getCourierStatus()==0){
 				comboBox.setSelectedIndex(0);
-				lblYes.setText("No");
+				lblYes.setText("Not Available");
 				lblYes.setForeground(Color.red);
 			}else{
 				comboBox.setSelectedIndex(1);
 				if(profile.getCourierBusy()==0){
-				lblYes.setText("Yes");
+				lblYes.setText("Available");
 				lblYes.setForeground(Color.blue);
 				}else{
-					lblYes.setText("No");;
+					lblYes.setText("Not Available");;
 					lblYes.setForeground(Color.red);
 				}
 			}

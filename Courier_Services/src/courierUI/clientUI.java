@@ -26,6 +26,8 @@ import org.hibernate.cfg.Configuration;
 
 import courierDM.Client;
 import courierDM.Userprofile;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 
@@ -59,6 +61,12 @@ public class clientUI extends JPanel{
 		client.add(lblClientInformation);
 		
 		txt_search = new JTextField();
+		txt_search.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				System.out.println("hello");
+			}
+		});
 		txt_search.setColumns(10);
 		txt_search.setBounds(131, 63, 220, 30);
 		client.add(txt_search);
