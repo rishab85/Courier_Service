@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 11, 2017 6:09:55 PM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+ <class catalog="courier" name="DeliveryTicket" table="delivery_ticket">
+  <id name="ticketId" type="java.lang.Integer">
+   <column name="ticket_id"/>
+   <generator class="identity"/>
+  </id>
+  <property generated="never" lazy="false" name="senderId" type="int">
+   <column name="sender_id" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="receiverId" type="int">
+   <column name="receiver_id" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="courierId" type="int">
+   <column name="courier_id" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="estimatedPickup" type="time">
+   <column length="8" name="estimated_pickup" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="estimatedDelivery" type="time">
+   <column length="8" name="estimated_delivery" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="actualPickup" type="time">
+   <column length="8" name="actual_pickup" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="actualDelivery" type="time">
+   <column length="8" name="actual_delivery" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="estimatedMiles" type="int">
+   <column name="estimated_miles" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="estimatedCost" type="int">
+   <column name="estimated_cost" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="billlTo" type="int">
+   <column name="billl_to" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="billed" type="int">
+   <column name="billed" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="delivered" type="int">
+   <column name="delivered" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="picked" type="int">
+   <column name="picked" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="transactionDate" type="date">
+   <column length="10" name="transaction_date" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="packageId" type="int">
+   <column name="package_id" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="driverBonus" type="int">
+   <column name="driver_bonus" not-null="true"/>
+  </property>
+ </class>
+</hibernate-mapping>
