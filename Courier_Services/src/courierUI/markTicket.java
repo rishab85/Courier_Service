@@ -168,7 +168,7 @@ public class markTicket extends JPanel{
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String action = "update";
-				frame.getContentPane().removeAll();
+				
 				DeliveryTicket ticket = new DeliveryTicket();
 				Client sender = new Client();
 				Client receiver = new Client();
@@ -182,6 +182,9 @@ public class markTicket extends JPanel{
 				
 				int row = table.getSelectedRow();
 				
+				if(row<0){
+					JOptionPane.showMessageDialog(frame, "Please Select the row you want to edit.");
+				}else{
 				row = table.convertRowIndexToView(row);
 				if(table.getModel().getValueAt(row, 5)=="Pending"){
 					int id = ((Integer) table.getModel().getValueAt(row,0));
@@ -189,12 +192,13 @@ public class markTicket extends JPanel{
 					s.flush();
 					tx.commit();
 					s.close();
-					
+					frame.getContentPane().removeAll();
 					frame.getContentPane().add(new createTicket(frame, ticket, action));
 					frame.getContentPane().repaint();
 					frame.getContentPane().validate();
 				}else{
 					JOptionPane.showMessageDialog(frame, "Courier is already out for delivery, cannot Edit ticket !!");
+				}
 				}
 			}
 		});

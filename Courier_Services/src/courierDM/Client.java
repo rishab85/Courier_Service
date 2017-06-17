@@ -2,11 +2,18 @@ package courierDM;
 // default package
 // Generated Jun 9, 2017 12:10:45 AM by Hibernate Tools 4.3.1.Final
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -20,6 +27,18 @@ public class Client implements java.io.Serializable {
 	private String clientAve;
 	private String clientPhone;
 	private String clientEmail;
+
+	
+	private Collection<DeliveryTicket> ticket;
+	
+	@OneToMany(mappedBy = "sender")
+	public Collection<DeliveryTicket> getTicket() {
+		return ticket;
+	}
+
+	public void setTicket(Collection<DeliveryTicket> ticket) {
+		this.ticket = ticket;
+	}
 
 	public Client() {
 	}
@@ -88,5 +107,7 @@ public class Client implements java.io.Serializable {
 	public void setClientEmail(String clientEmail) {
 		this.clientEmail = clientEmail;
 	}
+
+	
 
 }

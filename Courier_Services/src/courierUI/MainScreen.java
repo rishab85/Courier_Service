@@ -216,6 +216,14 @@ public class MainScreen extends JFrame{
 		menuBar.add(mnReport);
 		
 		JMenuItem mntmClientReport = new JMenuItem("Client Report");
+		mntmClientReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new clientReport(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnReport.add(mntmClientReport);
 		
 		JMenuItem mntmDriverReport = new JMenuItem("Driver Report");
