@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -348,8 +349,13 @@ public class markTicket extends JPanel{
 					cour.setCourierBusy(0);
 					dTicket.setActualDelivery(cal.getTime());;
 					dTicket.setDelivered(1);
+					Date est = dTicket.getEstimatedDelivery();
+					if(cal.getTime().before(est)){
+						dTicket.setDriverBonus(2);
+					}
 					s.save(dTicket);
 					s.save(cour);
+					
 					s.flush();
 					tx.commit();
 					s.close();

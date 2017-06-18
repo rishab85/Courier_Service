@@ -48,6 +48,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import courierDM.Client;
+import courierDM.Courier;
 import courierDM.DeliveryRate;
 import courierDM.DeliveryTicket;
 
@@ -74,26 +75,28 @@ import org.jdatepicker.impl.UtilCalendarModel;
 import java.util.Calendar;
 
 @Entity
-public class clientReport extends JPanel{
+public class courierReport extends JPanel{
 
 	private JFrame frame;
 	private JTable table;
-	private JPanel clientReport;
+	private JPanel courierReport;
 	private JLabel lbl_error;
-	private ArrayList<Client> clientRe = new ArrayList<Client>();
+	private ArrayList<Courier> courier = new ArrayList<Courier>();
 	private List<DeliveryTicket> dT = new ArrayList<DeliveryTicket>();
 	private Date dtFr =null;
 	private Date dtTo = null;
-	public clientReport(JFrame frame) {
-		clientReport = new JPanel();
-		frame.getContentPane().add(clientReport, "name_2137049467741814");
-		clientReport.setLayout(null);
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private JButton btnGenerate;
+	public courierReport(JFrame frame) {
+		courierReport = new JPanel();
+		frame.getContentPane().add(courierReport, "name_2137049467741814");
+		courierReport.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Client Report");
+		JLabel lblNewLabel = new JLabel("Courier Report");
 		lblNewLabel.setForeground(Color.LIGHT_GRAY);
 		lblNewLabel.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		lblNewLabel.setBounds(48, 29, 209, 37);
-		clientReport.add(lblNewLabel);
+		courierReport.add(lblNewLabel);
 		
 		UtilDateModel model = new UtilDateModel();
 		Properties p = new Properties();
@@ -104,7 +107,7 @@ public class clientReport extends JPanel{
 		JDatePickerImpl datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
 		datePicker.setLocation(94, 89);
 		datePicker.setSize(182, 25);
-		clientReport.add(datePicker);
+		courierReport.add(datePicker);
 		
 		UtilDateModel model2 = new UtilDateModel();
 		Properties p2 = new Properties();
@@ -115,19 +118,19 @@ public class clientReport extends JPanel{
 		JDatePickerImpl datePicker2 = new JDatePickerImpl(datePanel2, new DateComponentFormatter());
 		datePicker2.setLocation(431, 89);
 		datePicker2.setSize(182, 25);
-		clientReport.add(datePicker2);
+		courierReport.add(datePicker2);
 		
 		JLabel lblClientAddress = new JLabel("Till");
 		lblClientAddress.setBounds(385, 89, 34, 16);
-		clientReport.add(lblClientAddress);
+		courierReport.add(lblClientAddress);
 		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(48, 127, 767, 9);
-		clientReport.add(separator);
+		courierReport.add(separator);
 		
-		JButton btnGenerate = new JButton("Generate");
+		btnGenerate = new JButton("Generate");
 		btnGenerate.setBounds(656, 79, 159, 32);
-		clientReport.add(btnGenerate);
+		courierReport.add(btnGenerate);
 		
 		
 		
@@ -135,11 +138,11 @@ public class clientReport extends JPanel{
 		lbl_error.setFont(new Font("Malgun Gothic", Font.BOLD | Font.ITALIC, 14));
 		lbl_error.setForeground(Color.RED);
 		lbl_error.setBounds(48, 63, 375, 16);
-		clientReport.add(lbl_error);
+		courierReport.add(lbl_error);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(48, 149, 767, 288);
-		clientReport.add(scrollPane);
+		courierReport.add(scrollPane);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -153,7 +156,7 @@ public class clientReport extends JPanel{
 		
 		JLabel lblFrom = new JLabel("From");
 		lblFrom.setBounds(48, 87, 34, 16);
-		clientReport.add(lblFrom);
+		courierReport.add(lblFrom);
 		
 		JButton btnGeneratePdf = new JButton("Generate PDF");
 		btnGeneratePdf.addActionListener(new ActionListener() {
@@ -172,7 +175,6 @@ public class clientReport extends JPanel{
 		btnGeneratePdf.setBounds(673, 450, 142, 37);
 		
 		
-		
 		btnGenerate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				panel.removeAll();
@@ -186,7 +188,7 @@ public class clientReport extends JPanel{
 				Transaction tx = s.beginTransaction();
 				
 				Calendar c = Calendar.getInstance();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 				int fromY = datePicker.getModel().getYear();
 				int fromM = datePicker.getModel().getMonth()+1;
@@ -206,17 +208,16 @@ public class clientReport extends JPanel{
 				}
 				
 				
-				clientRe = (ArrayList<Client>) s.createQuery("from Client").list();
+				courier = (ArrayList<Courier>) s.createQuery("from Courier").list();
 
 				
 				
 				
-				JPanel[] pan = new JPanel[clientRe.size()];
-				GridBagConstraints[] gbc = new GridBagConstraints[clientRe.size()];
+				JPanel[] pan = new JPanel[courier.size()];
+				GridBagConstraints[] gbc = new GridBagConstraints[courier.size()];
 				
 				
-				
-				for (int i=0; i<clientRe.size(); i++){
+				for (int i=0; i<courier.size(); i++){
 					
 					pan[i] = new JPanel();
 					pan[i].setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -232,7 +233,7 @@ public class clientReport extends JPanel{
 					
 					JLabel name = new JLabel();
 					name.setBounds(10, 10, 300, 30);
-					name.setText("Client Name : " + clientRe.get(i).getClientName());
+					name.setText("Courier Name : " + courier.get(i).getCourierName());
 					pan[i].add(name);
 					
 					JTable tab = new JTable();
@@ -243,14 +244,14 @@ public class clientReport extends JPanel{
 						new Object[][] {
 						},
 						new String[] {
-								"Package ID", "Receiver", "Estimated Pickup", "Actual Pickup", "Estimated Delivery", "Actual Delivery"
+								"Package ID"," Estimated Pickup", "Actual Pickup", "Estimated Delivery", "Actual Delivery", "Bonus Earned"
 						}
 					));
 					
 					tab.setFont(new Font("Arial", Font.PLAIN, 14));
 					
-					dT = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where senderId = ? and transactionDate BETWEEN :start and :end")
-							.setParameter(0, clientRe.get(i).getClientId())
+					dT = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where courierId = :id and transactionDate BETWEEN :start and :end")
+							.setParameter("id", courier.get(i).getCourierId())
 							.setParameter("start", dtFr)
 							.setParameter("end", dtTo)
 							.list();
@@ -259,30 +260,34 @@ public class clientReport extends JPanel{
 					model = (DefaultTableModel) tab.getModel();
 					model.setRowCount(0);
 					Object[] rowData = new Object[7];
+					System.out.println(dT.size());
 					for(int j=dT.size(); j>=0; j--){
+						
 						if(dT.size()>0){
 							genPDF = 1;
 							
 							if(j==dT.size()){
 							rowData[0] = "Package ID";
-							rowData[1] = "Receiver";
-							rowData[2] = "Estimated Pickup";
-							rowData[3] = "Actual Pickup";
-							rowData[4] = "Estimated Delivery";
-							rowData[5] = "Actual Delivery";
+							rowData[1] = "Estimated Pickup";
+							rowData[2] = "Actual Pickup";
+							rowData[3] = "Estimated Delivery";
+							rowData[4] = "Actual Delivery";
+							rowData[5] = "Bonus";
 							}else{
 								rowData[0] = dT.get(j).getPackageId();
-								rowData[1] = dT.get(j).getReceiver().getClientName();
-								rowData[2] = dT.get(j).getEstimatedDelivery();
-								rowData[3] = dT.get(j).getActualDelivery();
-								rowData[4] = dT.get(j).getEstimatedDelivery();
-								rowData[5] = dT.get(j).getActualDelivery();
-								System.out.println(rowData[5]);
+								rowData[1] = dT.get(j).getEstimatedDelivery();
+								rowData[2] = dT.get(j).getActualDelivery();
+								rowData[3] = dT.get(j).getEstimatedDelivery();
+								rowData[4] = dT.get(j).getActualDelivery();
+								rowData[5] = dT.get(j).getDriverBonus();
+								
 							}
 							model.addRow(rowData);
 						}else{
+							System.out.println(courier.get(i).getCourierName());
 							panel.remove(pan[i]);
-							clientReport.remove(btnGeneratePdf);
+							courier.remove(courier.get(i));
+							i = i - 1;
 						}
 					}
 					frame.getContentPane().validate();
@@ -292,11 +297,12 @@ public class clientReport extends JPanel{
 				s.flush();
 				tx.commit();
 				s.close();
+				
 				if(genPDF==1){
-					clientReport.add(btnGeneratePdf);
-					genPDF=0;
+					courierReport.add(btnGeneratePdf);
+					genPDF = 0;
 				}else{
-					clientReport.remove(btnGeneratePdf);
+					courierReport.remove(btnGeneratePdf);
 				}
 			}
 		});
@@ -335,7 +341,7 @@ public class clientReport extends JPanel{
 			new Object[][] {
 			},
 			new String[] {
-				"Package ID", "Receiver", "Estimated Pickup", "Actual Pickup", "Estimated Delivery", "Actual Delivery"
+				"Package ID","Estimated Pickup", "Actual Pickup", "Estimated Delivery", "Actual Delivery", "Bonus"
 			}
 		));
 		
@@ -348,7 +354,7 @@ public class clientReport extends JPanel{
 		
 		Document doc = new Document();
 		try {
-			PdfWriter.getInstance(doc, new FileOutputStream("Report.pdf"));
+			PdfWriter.getInstance(doc, new FileOutputStream("DriverReport.pdf"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -367,42 +373,35 @@ public class clientReport extends JPanel{
 		Transaction tx = s.beginTransaction();
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String from = "2017-06-12", to ="2017-06-15";
 		
-
-		
-			Date frmDate = format.parse(from);
-			Date enDate = format.parse(to);
-		
-		
-		client = (ArrayList<Client>) s.createQuery("from Client").list();
 		
 		
 		com.itextpdf.text.Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
 		com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.BOLD);
-		for(int j=0; j<client.size(); j++){
+		for(int j=0; j<courier.size(); j++){
 			PdfPTable tbl = new PdfPTable(6);
 			tbl.getDefaultCell().setPadding(4);;
-			doc.add(new Paragraph("Client Name : " + client.get(j).getClientName(), fontbold));
-			doc.add(new Paragraph("Client Address : " + client.get(j).getClientStreet() + " Street " + client.get(j).getClientAve()));
-			doc.add(new Paragraph("Client Phone : " + client.get(j).getClientPhone()));
+			doc.add(new Paragraph("Courier Name : " + courier.get(j).getCourierName(), fontbold));
+			doc.add(new Paragraph("Courier Phone : " + courier.get(j).getCourierPhone()));
 			doc.add(new Paragraph("Report From : " + format.format(dtFr) + "\t To : " + format.format(dtTo), regular));
 			doc.add(new Paragraph(" "));
 			doc.add(new Paragraph(" "));
 			tbl.addCell("Package Id");
 			tbl.setHeaderRows(0);
-			
-			tbl.addCell("Receiver");
 			tbl.addCell("Estimated Pickup");
 			tbl.addCell("Actual Pickup");
 			tbl.addCell("Estimated Delivery");
 			tbl.addCell("Actual Delivery");
+			tbl.addCell("Bonus");
 			List<DeliveryTicket> list = new ArrayList<DeliveryTicket>();
-			list = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where senderId = ? and transactionDate BETWEEN :start and :end")
-					.setParameter(0, client.get(j).getClientId())
+			list = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where courierId = ? and transactionDate BETWEEN :start and :end")
+					.setParameter(0, courier.get(j).getCourierId())
 					.setParameter("start", dtFr)
 					.setParameter("end", dtTo)
 					.list();
+			
+			int bonus = 0, total=list.size(), ontime = 0;
+			
 			for(int i=0; i<list.size(); i++ ){
 //				doc.add(new Paragraph(list.get(i).getPackageId() + "\t" + "\t | \t" + list.get(i).getReceiver().getClientName()
 //						+ "\t" + "\t | \t" + list.get(i).getTransactionDate()
@@ -410,8 +409,6 @@ public class clientReport extends JPanel{
 //						+ "\t" + "\t | \t" + list.get(i).getActualDelivery()));
 				PdfPCell myCell1 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getPackageId()), regular)); 
 				tbl.addCell(myCell1);
-				PdfPCell myCell2 = new PdfPCell(new Phrase(list.get(i).getReceiver().getClientName(), regular)); 
-				tbl.addCell(myCell2);
 				PdfPCell myCell6 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedPickup()), regular)); 
 				tbl.addCell(myCell6);
 				PdfPCell myCell3 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualPickup()), regular));
@@ -420,15 +417,25 @@ public class clientReport extends JPanel{
 				tbl.addCell(myCell4);
 				PdfPCell myCell5 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualDelivery()), regular));
 				tbl.addCell(myCell5);
+				PdfPCell myCell2 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getDriverBonus()),regular)); 
+				tbl.addCell(myCell2);
 				
+				if(list.get(i).getDriverBonus()>0){
+					bonus = bonus + 2;
+					ontime++;
+				}
 			}
 			doc.add(tbl);
+			doc.add(new Paragraph("--------------------------------------------------------------------------------"));
+			doc.add(new Paragraph("Total Deliveries :" + String.valueOf(total),regular ));
+			doc.add(new Paragraph("Total Bonus : " + String.valueOf(bonus),regular ));
+			doc.add(new Paragraph("Deliveries on time : " + String.valueOf(ontime),regular ));
+			doc.add(new Paragraph("Late Deliveries : " + String.valueOf(total-ontime),regular ));
 			doc.newPage();
 		}
 		s.flush();
 		tx.commit();
 		s.close();
-		
 		doc.close();
 		
 		JOptionPane.showMessageDialog(frame, "PDF file created successfully");
@@ -445,10 +452,4 @@ public class clientReport extends JPanel{
 		}
 	}
 	
-	public void getData() throws ParseException{
-		
-		
-		
-		
-	}
 }

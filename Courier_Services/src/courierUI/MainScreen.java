@@ -227,9 +227,25 @@ public class MainScreen extends JFrame{
 		mnReport.add(mntmClientReport);
 		
 		JMenuItem mntmDriverReport = new JMenuItem("Driver Report");
+		mntmDriverReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new courierReport(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnReport.add(mntmDriverReport);
 		
 		JMenuItem mntmGenerateBill = new JMenuItem("Generate Bill");
+		mntmGenerateBill.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new clientBill(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnReport.add(mntmGenerateBill);
 		
 		JMenu mnLogout = new JMenu("Logout");
