@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,6 +53,7 @@ public class markTicket extends JPanel{
 	private JPanel pendingTicket;
 	private JTextField textField;
 	private ArrayList<Courier> driver;
+	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	/**
 	 * Launch the application.
 	
@@ -347,12 +350,22 @@ public class markTicket extends JPanel{
 					dTicket =(DeliveryTicket) s.get(DeliveryTicket.class, new Integer(id));
 					cour =(Courier) s.get(Courier.class, new Integer(dTicket.getCourierId()));
 					cour.setCourierBusy(0);
-					dTicket.setActualDelivery(cal.getTime());;
+					dTicket.setActualDelivery(cal.getTime());
 					dTicket.setDelivered(1);
-					Date est = dTicket.getEstimatedDelivery();
-					if(cal.getTime().before(est)){
+					String est = sdf.format(dTicket.getEstimatedDelivery());
+					est = est.replaceAll(":", "");
+					
+					long t = cal.getTimeInMillis() - (5*60000);
+					Date now = new Date(t);
+					String nowD = sdf.format(now);
+					nowD = nowD.replaceAll(":", "");
+					System.out.println(est +" " + nowD);
+					if(Integer.parseInt(nowD)<Integer.parseInt(est)){
 						dTicket.setDriverBonus(2);
+					}else{
+						System.out.println("sorry");
 					}
+					
 					s.save(dTicket);
 					s.save(cour);
 					
