@@ -6,7 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import java.util.Collection;
+
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -14,12 +18,25 @@ import javax.persistence.Table;
 @Table(name = "courier", catalog = "courier")
 public class Courier implements java.io.Serializable {
 
+	
+
 	private Integer courierId;
 	private String courierName;
 	private String courierPhone;
 	private int courierStatus;
 	private int courierBusy;
 
+	private Collection<DeliveryTicket> ticket;
+	
+	@OneToMany(mappedBy = "courier")
+	public Collection<DeliveryTicket> getTicket() {
+		return ticket;
+	}
+	
+	public void setTicket(Collection<DeliveryTicket> ticket) {
+		this.ticket = ticket;
+	}
+	
 	public Courier() {
 	}
 

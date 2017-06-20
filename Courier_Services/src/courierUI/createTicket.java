@@ -75,7 +75,7 @@ public class createTicket extends JPanel{
 	
 	private DeliveryTicket dTicket = new DeliveryTicket();
 	 private static final DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-	 private static final DateFormat sdt = new SimpleDateFormat("yyyy/mm/dd");
+	 private static final DateFormat sdt = new SimpleDateFormat("yyyy-MM-dd");
 	 private int check = 0;
 	 private JTextField actualPickup;
 	 private JTextField actualDelivery;
@@ -130,7 +130,6 @@ public class createTicket extends JPanel{
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
 		
-		
 		lbl_error = new JLabel("");
 		lbl_error.setFont(new Font("Malgun Gothic", Font.BOLD | Font.ITALIC, 14));
 		lbl_error.setForeground(Color.RED);
@@ -163,7 +162,7 @@ public class createTicket extends JPanel{
 		senderName.setColumns(10);
 		
 		JLabel lblPickupAddress = new JLabel("Pickup Address");
-		lblPickupAddress.setBounds(54, 254, 88, 16);
+		lblPickupAddress.setBounds(54, 254, 105, 16);
 		createTicket.add(lblPickupAddress);
 		
 		senderAddress = new JTextField();

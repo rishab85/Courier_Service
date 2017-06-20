@@ -48,7 +48,7 @@ public class DeliveryTicket implements java.io.Serializable {
 	
 	private Client receiver;
 
-	
+	private Client billTo;
 
 	public DeliveryTicket() {
 	}
@@ -264,5 +264,15 @@ public class DeliveryTicket implements java.io.Serializable {
 
 	public void setReceiver(Client receiver) {
 		this.receiver = receiver;
+	}
+
+	@ManyToOne 
+	@JoinColumn(name="billl_to",  insertable=false, updatable=false)
+	public Client getBillTo() {
+		return billTo;
+	}
+
+	public void setBillTo(Client billTo) {
+		this.billTo = billTo;
 	}
 }

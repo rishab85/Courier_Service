@@ -5,8 +5,11 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -50,6 +53,7 @@ public class markTicket extends JPanel{
 	private JPanel pendingTicket;
 	private JTextField textField;
 	private ArrayList<Courier> driver;
+	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	/**
 	 * Launch the application.
 	
@@ -168,7 +172,7 @@ public class markTicket extends JPanel{
 		btnAddNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String action = "update";
-				frame.getContentPane().removeAll();
+				
 				DeliveryTicket ticket = new DeliveryTicket();
 				Client sender = new Client();
 				Client receiver = new Client();
@@ -182,6 +186,9 @@ public class markTicket extends JPanel{
 				
 				int row = table.getSelectedRow();
 				
+				if(row<0){
+					JOptionPane.showMessageDialog(frame, "Please Select the row you want to edit.");
+				}else{
 				row = table.convertRowIndexToView(row);
 				if(table.getModel().getValueAt(row, 5)=="Pending"){
 					int id = ((Integer) table.getModel().getValueAt(row,0));
@@ -189,12 +196,13 @@ public class markTicket extends JPanel{
 					s.flush();
 					tx.commit();
 					s.close();
-					
+					frame.getContentPane().removeAll();
 					frame.getContentPane().add(new createTicket(frame, ticket, action));
 					frame.getContentPane().repaint();
 					frame.getContentPane().validate();
 				}else{
 					JOptionPane.showMessageDialog(frame, "Courier is already out for delivery, cannot Edit ticket !!");
+				}
 				}
 			}
 		});
@@ -342,10 +350,25 @@ public class markTicket extends JPanel{
 					dTicket =(DeliveryTicket) s.get(DeliveryTicket.class, new Integer(id));
 					cour =(Courier) s.get(Courier.class, new Integer(dTicket.getCourierId()));
 					cour.setCourierBusy(0);
-					dTicket.setActualDelivery(cal.getTime());;
+					dTicket.setActualDelivery(cal.getTime());
 					dTicket.setDelivered(1);
+					String est = sdf.format(dTicket.getEstimatedDelivery());
+					est = est.replaceAll(":", "");
+					
+					long t = cal.getTimeInMillis() - (5*60000);
+					Date now = new Date(t);
+					String nowD = sdf.format(now);
+					nowD = nowD.replaceAll(":", "");
+					System.out.println(est +" " + nowD);
+					if(Integer.parseInt(nowD)<Integer.parseInt(est)){
+						dTicket.setDriverBonus(2);
+					}else{
+						System.out.println("sorry");
+					}
+					
 					s.save(dTicket);
 					s.save(cour);
+					
 					s.flush();
 					tx.commit();
 					s.close();
