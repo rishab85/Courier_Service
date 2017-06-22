@@ -85,7 +85,7 @@ public class IntersectionsUI extends JPanel {
 			new Object[][] {
 			},
 			new String[] {
-				"id", "streets", "ave", "address","actual_Map_Address"
+				"id", "streets", "ave", "direction","actual_Map_Address"
 			}
 		));
 		loadTable();
