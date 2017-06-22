@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Jun 22, 2017 11:34:38 AM by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="BestRoute" table="best_route" catalog="courier" optimistic-lock="version">
+        <id name="routeId" type="java.lang.Integer">
+            <column name="route_id" />
+            <generator class="identity" />
+        </id>
+        <property name="packageId" type="int">
+            <column name="package_id" not-null="true" />
+        </property>
+        <property name="routeFrom" type="string">
+            <column name="route_from" length="10" not-null="true" />
+        </property>
+        <property name="route" type="string">
+            <column name="route" length="100" not-null="true" />
+        </property>
+        <property name="totalMiles" type="int">
+            <column name="total_miles" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>
