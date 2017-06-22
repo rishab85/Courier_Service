@@ -10,4 +10,6 @@
 	<table-filter match-name="delivery_ticket"
 		match-catalog="courier">
 	</table-filter>
+	<table-filter match-name="map" match-catalog="courier"></table-filter>
+	<table-filter match-name="best_route" match-catalog="courier"></table-filter>
 </hibernate-reverse-engineering>

@@ -198,6 +198,14 @@ public class MainScreen extends JFrame{
 		mntmDeliveryRate.setAccelerator(KeyStroke.getKeyStroke('R', CTRL_DOWN_MASK));
 	}
 		JMenuItem mntmIntersectionInformation = new JMenuItem("Intersection Information");
+		mntmIntersectionInformation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.getContentPane().removeAll();
+				frame.getContentPane().add(new intersectionUI(frame));
+				frame.getContentPane().repaint();
+				frame.getContentPane().validate();
+			}
+		});
 		mnMaintian.add(mntmIntersectionInformation);
 		
 		JMenuItem mntmCourierInformation = new JMenuItem("Courier Information");

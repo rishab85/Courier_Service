@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
 
@@ -31,10 +32,13 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import courierDM.BestRoute;
 import courierDM.Client;
 import courierDM.DeliveryRate;
 import courierDM.DeliveryTicket;
 import courierDM.Userprofile;
+import courierDM.senderReceiver;
+
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
@@ -72,7 +76,10 @@ public class createTicket extends JPanel{
 	private JButton findSender;
 	private JButton findReceiver;
 	private JButton btnCalculate;
-	
+	private Integer sourceStreet;
+	private char sourceAve;
+	private Integer destStreet;
+	private char destAve;
 	private DeliveryTicket dTicket = new DeliveryTicket();
 	 private static final DateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 	 private static final DateFormat sdt = new SimpleDateFormat("yyyy-MM-dd");
@@ -80,6 +87,12 @@ public class createTicket extends JPanel{
 	 private JTextField actualPickup;
 	 private JTextField actualDelivery;
 	 private JTextField courier;
+	 private generateRoute route;
+	 private Integer totalMiles;
+	 private BestRoute pickup = new BestRoute();
+	 private BestRoute deliver = new BestRoute();
+	 private BestRoute office = new BestRoute();
+	 
 	public createTicket(JFrame frame, DeliveryTicket dTicket, String action) {
 		this.frame = frame;
 		this.dTicket = dTicket;
@@ -348,6 +361,7 @@ public class createTicket extends JPanel{
 			public void actionPerformed(ActionEvent arg0) {
 				
 				calculate();
+				
 			}
 		});
 		btnCalculate.setBounds(229, 282, 97, 25);
@@ -581,7 +595,8 @@ public class createTicket extends JPanel{
 			if(sender.size()>0){
 				senderName.setText(sender.get(0).getClientName());
 				senderAddress.setText(sender.get(0).getClientStreet() + " Street " + " " +sender.get(0).getClientAve());
-				
+				sourceStreet = Integer.valueOf(String.valueOf(sender.get(0).getClientStreet().charAt(0)));
+				sourceAve = sender.get(0).getClientAve().charAt(0);
 				if(check<2){
 					check = check+1;
 				}
@@ -594,7 +609,8 @@ public class createTicket extends JPanel{
 			if(receiver.size()>0){
 				receiverName.setText(receiver.get(0).getClientName());
 				receiverAddress.setText(receiver.get(0).getClientStreet() + " Street " + " " +receiver.get(0).getClientAve());
-				
+				destStreet = Integer.valueOf(String.valueOf(receiver.get(0).getClientStreet().charAt(0)));
+				destAve = receiver.get(0).getClientAve().charAt(0);
 				if(check<2){
 					check = check+1;
 				}
@@ -606,6 +622,7 @@ public class createTicket extends JPanel{
 	
 	public void calculate(){
 		if(check==2){
+			
 			Random rand = new Random();
 
 			int  n = rand.nextInt(900) + 100;
@@ -619,11 +636,31 @@ public class createTicket extends JPanel{
 			String pkgID = date = date + String.valueOf(n);
 			packageID.setText(pkgID);
 			
-			 Calendar cal = Calendar.getInstance();
-			pickup_time.setText(sdf.format(cal.getTime()));
-			delivery_time.setText(sdf.format(cal.getTime()));
-			miles.setText("5");
-			cost.setText("20");
+			pickup(Integer.parseInt(pkgID));
+			deliver(Integer.parseInt(pkgID));
+			office(Integer.parseInt(pkgID));
+			double pM = pickup.getTotalMiles();
+			double dM = deliver.getTotalMiles();
+			double oM = office.getTotalMiles();
+			Calendar cal = Calendar.getInstance();
+			double tm = (0.1 *pM) + (0.1*dM) + (0.1*oM);
+			pM = ((0.1 * pM) * 12) + 10;
+			dM = ((0.1 * dM) * 12) + 10;
+			oM = ((0.1 * oM) * 12) + 10;
+			
+			
+			
+			long pt = (long) (cal.getTimeInMillis() + (pM*60000));
+			long dt = (long) (pt + (dM*60000));
+			long ot = (long) (dt + (oM*60000));
+			Date pickS = new Date(pt);
+			Date deliverS = new Date(dt);
+			
+			
+			pickup_time.setText(sdf.format(pickS));
+			delivery_time.setText(sdf.format(deliverS));
+			miles.setText(String.valueOf(tm));
+			cost.setText(String.valueOf(tm * 10));
 			
 			ready = true;
 			}else{
@@ -650,8 +687,8 @@ public class createTicket extends JPanel{
 			ticket.setActualDelivery(sdf.parse("00:00:00"));
 			ticket.setActualPickup(sdf.parse("00:00:00"));
 			ticket.setActualDelivery(sdf.parse("00:00:00"));
-			ticket.setEstimatedMiles(Integer.parseInt(miles.getText()));
-			ticket.setEstimatedCost(Integer.parseInt(cost.getText()));
+			ticket.setEstimatedMiles(Double.parseDouble(miles.getText()));
+			ticket.setEstimatedCost(Double.parseDouble(cost.getText()));
 			if(buttonGroup_1.getSelection().getActionCommand()=="sender"){
 				ticket.setBilllTo(Integer.parseInt(senderID.getText()));
 			}else{
@@ -668,6 +705,10 @@ public class createTicket extends JPanel{
 			SessionFactory sf = cfg.buildSessionFactory();
 			Session s = sf.openSession();
 			Transaction tx = s.beginTransaction();
+			
+			s.save(pickup);
+			s.save(deliver);
+			s.save(office);
 			s.save(ticket);
 			
 			s.flush();
@@ -692,8 +733,8 @@ public class createTicket extends JPanel{
 			dTicket.setReceiverId(Integer.parseInt(receiverID.getText()));
 			dTicket.setEstimatedPickup(sdf.parse(pickup_time.getText()));
 			dTicket.setEstimatedDelivery(sdf.parse(delivery_time.getText()));
-			dTicket.setEstimatedMiles(Integer.parseInt(miles.getText()));
-			dTicket.setEstimatedCost(Integer.parseInt(cost.getText()));
+			dTicket.setEstimatedMiles(Double.parseDouble(miles.getText()));
+			dTicket.setEstimatedCost(Double.parseDouble(cost.getText()));
 			if(buttonGroup_1.getSelection().getActionCommand()=="sender"){
 				dTicket.setBilllTo(Integer.parseInt(senderID.getText()));
 			}else{
@@ -717,5 +758,43 @@ public class createTicket extends JPanel{
 			frame.getContentPane().repaint();
 			frame.getContentPane().validate();
 		}
+	}
+	
+	public void pickup(int id){
+		//pickup
+		senderReceiver srPick = new senderReceiver();
+		srPick.setSourceStreet(4);
+		srPick.setSourceAve('D');
+		srPick.setDestStreet(sourceStreet);
+		srPick.setDestAve(sourceAve);
+		
+		generateRoute pRoute = new generateRoute();
+		pickup = pRoute.generate(srPick, "Pick");
+		pickup.setPackageId(id);
+		System.out.println(pickup.getRoute());
+	}
+	
+	public void deliver(int id){
+		//pickup to deliver
+				senderReceiver srDel = new senderReceiver();
+				srDel.setSourceStreet(sourceStreet);
+				srDel.setSourceAve(sourceAve);
+				srDel.setDestStreet(destStreet);
+				srDel.setDestAve(destAve);
+				generateRoute droute = new generateRoute();
+				deliver = droute.generate(srDel, "Deliver");
+				deliver.setPackageId(id);
+	}
+	
+	public void office(int id){
+		//pickup
+		senderReceiver srOff = new senderReceiver();
+		srOff.setSourceStreet(destStreet);
+		srOff.setSourceAve(destAve);
+		srOff.setDestStreet(4);
+		srOff.setDestAve('D');
+		generateRoute oRoute = new generateRoute();
+		office = oRoute.generate(srOff, "Office");
+		office.setPackageId(id);
 	}
 }

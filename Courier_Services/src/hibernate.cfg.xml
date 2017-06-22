@@ -11,5 +11,7 @@
   <mapping class="courierDM.Client"/>
   <mapping class="courierDM.Courier"/>
   <mapping class="courierDM.DeliveryTicket"/>
+  <mapping class="courierDM.Map"/>
+  <mapping class="courierDM.BestRoute"/>
  </session-factory>
 </hibernate-configuration>

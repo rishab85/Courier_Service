@@ -32,8 +32,8 @@ public class DeliveryTicket implements java.io.Serializable {
 	private Date estimatedDelivery;
 	private Date actualPickup;
 	private Date actualDelivery;
-	private int estimatedMiles;
-	private int estimatedCost;
+	private Double estimatedMiles;
+	private Double estimatedCost;
 	private int billlTo;
 	private int billed;
 	private int delivered;
@@ -54,7 +54,7 @@ public class DeliveryTicket implements java.io.Serializable {
 	}
 
 	public DeliveryTicket(int senderId, int receiverId, int courierId, Date estimatedPickup, Date estimatedDelivery,
-			Date actualPickup, Date actualDelivery, int estimatedMiles, int estimatedCost, int billlTo, int billed,
+			Date actualPickup, Date actualDelivery, Double estimatedMiles, Double estimatedCost, int billlTo, int billed,
 			int delivered, int picked, Date transactionDate, int packageId, int driverBonus) {
 		this.senderId = senderId;
 		this.receiverId = receiverId;
@@ -154,20 +154,20 @@ public class DeliveryTicket implements java.io.Serializable {
 	}
 
 	@Column(name = "estimated_miles", nullable = false)
-	public int getEstimatedMiles() {
+	public Double getEstimatedMiles() {
 		return this.estimatedMiles;
 	}
 
-	public void setEstimatedMiles(int estimatedMiles) {
+	public void setEstimatedMiles(Double estimatedMiles) {
 		this.estimatedMiles = estimatedMiles;
 	}
 
 	@Column(name = "estimated_cost", nullable = false)
-	public int getEstimatedCost() {
+	public Double getEstimatedCost() {
 		return this.estimatedCost;
 	}
 
-	public void setEstimatedCost(int estimatedCost) {
+	public void setEstimatedCost(Double estimatedCost) {
 		this.estimatedCost = estimatedCost;
 	}
 

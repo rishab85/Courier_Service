@@ -60,7 +60,7 @@ public class deliveredTicket extends JPanel{
 		pendingTicket.setLayout(null);
 		frame.getContentPane().add(pendingTicket, "name_2138240631062768");
 		
-		JLabel lblClientInformation = new JLabel("Pending Orders");
+		JLabel lblClientInformation = new JLabel("Delivered Orders");
 		lblClientInformation.setForeground(Color.LIGHT_GRAY);
 		lblClientInformation.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 18));
 		lblClientInformation.setBounds(48, 13, 209, 37);

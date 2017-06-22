@@ -42,6 +42,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.CMYKColor;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -86,7 +87,8 @@ public class clientBill extends JPanel{
 	private Date dtFr =null;
 	private Date dtTo = null;
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	private int totalCost = 0, totalService = 0;
+	double totalCost = 0;
+	private int totalService = 0;
 	public clientBill(JFrame frame) {
 		clientBill = new JPanel();
 		frame.getContentPane().add(clientBill, "name_2137049467741814");
@@ -276,6 +278,8 @@ public class clientBill extends JPanel{
 						}
 					}
 					cost.setText("Total Cost : " + String.valueOf(totalCost));
+					totalCost = 0;
+					totalService = 0;
 					frame.getContentPane().validate();
 					frame.getContentPane().repaint();
 				}
@@ -371,7 +375,9 @@ public class clientBill extends JPanel{
 		
 		Calendar calen = Calendar.getInstance();
 		com.itextpdf.text.Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
-		com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.BOLD);
+		com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.PLAIN);
+		com.itextpdf.text.Font header = FontFactory.getFont("Arial", 10, Font.BOLD);
+		CMYKColor cmyk = new CMYKColor(5, 3, 0, 40);
 		for(int j=0; j<clientRe.size(); j++){
 			List<DeliveryTicket> list = new ArrayList<DeliveryTicket>();
 			list = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where billlTo = :id and billed = :bil and delivered = :del")
@@ -388,29 +394,69 @@ public class clientBill extends JPanel{
 			doc.add(new Paragraph("Bill From : " + format.format(list.get(list.size()-1).getTransactionDate()) + "\t To : " + format.format(calen.getTime()), regular));
 			doc.add(new Paragraph(" "));
 			doc.add(new Paragraph(" "));
-			tbl.addCell("Package Id");
-			tbl.addCell("Pickup Time");
-			tbl.addCell("Delivered Time");
-			tbl.addCell("Service Date");
-			tbl.addCell("Miles");
-			tbl.addCell("Cost");
+			
+			PdfPCell head1 = new PdfPCell(new Phrase("Package Id",header)); 
+			head1.setPadding(5);
+			head1.setBackgroundColor(cmyk);
+			tbl.addCell(head1);
+			tbl.setHeaderRows(0);
+			
+			PdfPCell head2 = new PdfPCell(new Phrase("Pickup Time",header)); 
+			head2.setPadding(5);
+			head2.setBackgroundColor(cmyk);
+			tbl.addCell(head2);
+			
+			PdfPCell head3 = new PdfPCell(new Phrase("Delivered Time",header)); 
+			head3.setPadding(5);
+			head3.setBackgroundColor(cmyk);
+			tbl.addCell(head3);
+			
+			PdfPCell head4 = new PdfPCell(new Phrase("Date",header)); 
+			head4.setPadding(5);
+			head4.setBackgroundColor(cmyk);
+			tbl.addCell(head4);
+			
+			PdfPCell head5 = new PdfPCell(new Phrase("Miles",header)); 
+			head5.setPadding(5);
+			head5.setBackgroundColor(cmyk);
+			tbl.addCell(head5);
+			
+			PdfPCell head6 = new PdfPCell(new Phrase("Cost",header)); 
+			head6.setPadding(5);
+			head6.setBackgroundColor(cmyk);
+			tbl.addCell(head6);
 			
 			for(int i=0; i<list.size(); i++ ){
 //				doc.add(new Paragraph(list.get(i).getPackageId() + "\t" + "\t | \t" + list.get(i).getReceiver().getClientName()
 //						+ "\t" + "\t | \t" + list.get(i).getTransactionDate()
 //						+ "\t" + "\t | \t" + list.get(i).getActualPickup()
 //						+ "\t" + "\t | \t" + list.get(i).getActualDelivery()));
+				
+				totalCost = totalCost+list.get(i).getEstimatedCost();
+				totalService++;
+				
 				PdfPCell myCell1 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getPackageId()), regular)); 
+				myCell1.setPadding(5);
 				tbl.addCell(myCell1);
+				
 				PdfPCell myCell2 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualPickup()), regular)); 
+				myCell2.setPadding(5);
 				tbl.addCell(myCell2);
+				
 				PdfPCell myCell6 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualDelivery()), regular)); 
+				myCell6.setPadding(5);
 				tbl.addCell(myCell6);
+				
 				PdfPCell myCell3 = new PdfPCell(new Phrase(sdf.format(list.get(i).getTransactionDate()), regular));
+				myCell3.setPadding(5);
 				tbl.addCell(myCell3);
+				
 				PdfPCell myCell4 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedMiles()), regular));
+				myCell4.setPadding(5);
 				tbl.addCell(myCell4);
+				
 				PdfPCell myCell5 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedCost()), regular));
+				myCell5.setPadding(5);
 				tbl.addCell(myCell5);
 				
 			}
@@ -419,7 +465,9 @@ public class clientBill extends JPanel{
 			doc.add(new Paragraph("------------------------------------------------------------------------"));
 			doc.add(new Paragraph(""));
 			doc.add(new Paragraph("Total cost :" + String.valueOf(totalCost)));
+			totalCost = 0;
 			doc.add(new Paragraph("Total Service : " + String.valueOf(totalService)));
+			totalService=0;
 			doc.newPage();
 		}
 		s.flush();

@@ -42,6 +42,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.CMYKColor;
 import com.itextpdf.text.pdf.PdfDate;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -375,9 +376,10 @@ public class courierReport extends JPanel{
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		
 		
-		
+		CMYKColor cmyk = new CMYKColor(5, 3, 0, 40);
 		com.itextpdf.text.Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
-		com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.BOLD);
+		com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.PLAIN);
+		com.itextpdf.text.Font header = FontFactory.getFont("Arial", 10, Font.BOLD);
 		for(int j=0; j<courier.size(); j++){
 			PdfPTable tbl = new PdfPTable(6);
 			tbl.getDefaultCell().setPadding(4);;
@@ -386,13 +388,38 @@ public class courierReport extends JPanel{
 			doc.add(new Paragraph("Report From : " + format.format(dtFr) + "\t To : " + format.format(dtTo), regular));
 			doc.add(new Paragraph(" "));
 			doc.add(new Paragraph(" "));
-			tbl.addCell("Package Id");
+			
+			PdfPCell head1 = new PdfPCell(new Phrase("Package Id",header)); 
+			head1.setPadding(5);
+			head1.setBackgroundColor(cmyk);
+			tbl.addCell(head1);
 			tbl.setHeaderRows(0);
-			tbl.addCell("Estimated Pickup");
-			tbl.addCell("Actual Pickup");
-			tbl.addCell("Estimated Delivery");
-			tbl.addCell("Actual Delivery");
-			tbl.addCell("Bonus");
+			
+			PdfPCell head2 = new PdfPCell(new Phrase("Estimated Pickup",header)); 
+			head2.setPadding(5);
+			head2.setBackgroundColor(cmyk);
+			tbl.addCell(head2);
+			
+			PdfPCell head3 = new PdfPCell(new Phrase("Actual Pickup",header)); 
+			head3.setPadding(5);
+			head3.setBackgroundColor(cmyk);
+			tbl.addCell(head3);
+			
+			PdfPCell head4 = new PdfPCell(new Phrase("Estimated Delivery",header)); 
+			head4.setPadding(5);
+			head4.setBackgroundColor(cmyk);
+			tbl.addCell(head4);
+			
+			PdfPCell head5 = new PdfPCell(new Phrase("Actual Delivery",header)); 
+			head5.setPadding(5);
+			head5.setBackgroundColor(cmyk);
+			tbl.addCell(head5);
+			
+			PdfPCell head6 = new PdfPCell(new Phrase("Bonus",header)); 
+			head6.setPadding(5);
+			head6.setBackgroundColor(cmyk);
+			tbl.addCell(head6);
+			
 			List<DeliveryTicket> list = new ArrayList<DeliveryTicket>();
 			list = (ArrayList<DeliveryTicket>) s.createQuery("from DeliveryTicket where courierId = ? and transactionDate BETWEEN :start and :end")
 					.setParameter(0, courier.get(j).getCourierId())
@@ -408,17 +435,29 @@ public class courierReport extends JPanel{
 //						+ "\t" + "\t | \t" + list.get(i).getActualPickup()
 //						+ "\t" + "\t | \t" + list.get(i).getActualDelivery()));
 				PdfPCell myCell1 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getPackageId()), regular)); 
+				myCell1.setPadding(5);
 				tbl.addCell(myCell1);
-				PdfPCell myCell6 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedPickup()), regular)); 
+				
+				PdfPCell myCell6 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedPickup()), regular));
+				myCell6.setPadding(5);
 				tbl.addCell(myCell6);
+				
 				PdfPCell myCell3 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualPickup()), regular));
+				myCell3.setPadding(5);
 				tbl.addCell(myCell3);
+				
 				PdfPCell myCell4 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getEstimatedDelivery()), regular));
+				myCell4.setPadding(5);
 				tbl.addCell(myCell4);
+				
 				PdfPCell myCell5 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getActualDelivery()), regular));
+				myCell5.setPadding(5);
 				tbl.addCell(myCell5);
+				
 				PdfPCell myCell2 = new PdfPCell(new Phrase(String.valueOf(list.get(i).getDriverBonus()),regular)); 
+				myCell2.setPadding(5);
 				tbl.addCell(myCell2);
+				
 				
 				if(list.get(i).getDriverBonus()>0){
 					bonus = bonus + 2;

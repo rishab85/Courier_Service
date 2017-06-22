@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,9 +31,17 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import courierDM.BestRoute;
 import courierDM.Client;
 import courierDM.Courier;
 import courierDM.DeliveryTicket;
+import courierDM.Map;
 import courierDM.Userprofile;
 import javax.swing.border.BevelBorder;
 import javax.swing.SwingConstants;
@@ -384,7 +394,145 @@ public class markTicket extends JPanel{
 		btnMarkDelivered.setBounds(683, 439, 137, 47);
 		pendingTicket.add(btnMarkDelivered);
 		
+		
+		// generate route //////////
 		JButton btnGenereateRoute = new JButton("COURIER INSTRUCTION");
+		btnGenereateRoute.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int row = table.getSelectedRow();
+				   if(row<0){
+					   JOptionPane.showMessageDialog(frame, "Please select the row you want to edit");
+				   }else{
+					 
+				   row = table.convertRowIndexToView(row);
+					int id = ((Integer) table.getModel().getValueAt(row,0));
+		           
+//				   String cr = (String) table.getModel().getValueAt(row,5);
+				   					   
+					   Object[] options = {"Yes",
+	                    "No"};
+					   int n = JOptionPane.showOptionDialog(frame,
+					   "Do you want to create the Driver Instruction",
+					    "Delivered",
+					    JOptionPane.YES_NO_CANCEL_OPTION,
+					    JOptionPane.QUESTION_MESSAGE,
+					    null,
+					    options,
+					    options[1]);
+				
+					   if(n==0){
+						Configuration cfg = new Configuration();
+						cfg.configure("hibernate.cfg.xml");
+						SessionFactory sf = cfg.buildSessionFactory();
+						Session s = sf.openSession();
+						Transaction tx = s.beginTransaction();
+						DeliveryTicket dTicket = new DeliveryTicket();
+						ArrayList<BestRoute> best = new ArrayList<BestRoute>();
+						dTicket =(DeliveryTicket) s.get(DeliveryTicket.class, new Integer(id));
+						best =  (ArrayList<BestRoute>) s.createQuery("from BestRoute where packageId = :id")
+								.setParameter("id", dTicket.getPackageId())
+								.list();
+						
+						
+						ArrayList<Map> map = new ArrayList<Map>();
+						map.clear();
+						map = (ArrayList<Map>) s.createQuery("From Map")
+								.list();
+						
+						
+						s.flush();
+						tx.commit();
+						s.close();
+						
+						char c = 'H';
+						String[][] mapL = new String[8][c];
+						int index = 0;
+						for(int i=1; i<=7 ; i++){
+							for (char j = 'A'; j<'H'; j++) {
+								mapL[i][j] = map.get(index).getEdgeName();
+								index ++;
+							}
+						}
+						
+						Document doc = new Document();
+						try {
+							PdfWriter.getInstance(doc, new FileOutputStream("instruction.pdf"));
+						} catch (FileNotFoundException | DocumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						doc.open();
+						com.itextpdf.text.Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
+						com.itextpdf.text.Font regular = FontFactory.getFont("Arial", 10, Font.PLAIN);
+						com.itextpdf.text.Font header = FontFactory.getFont("Arial", 10, Font.BOLD);
+						try {
+							doc.add(new Paragraph("Delivery Information", fontbold));
+							doc.add(new Paragraph("Package ID : " + dTicket.getPackageId(),header));
+							
+							doc.add(new Paragraph(" "));
+							doc.add(new Paragraph(" "));
+							
+							doc.add(new Paragraph("Pickup Information", header));
+							doc.add(new Paragraph("Pickup Time : " + dTicket.getEstimatedPickup(), regular));
+							doc.add(new Paragraph("Pickup Destination : " + dTicket.getSender().getClientStreet() + " Street " + dTicket.getSender().getClientAve()));
+							doc.add(new Paragraph(" "));
+							doc.add(new Paragraph("Direction", header));
+							int count = 0;
+							String direction = null;
+							for(int i=0; i<best.get(0).getRouteId().SIZE/3; i+=3){
+								if(best.get(0).getRoute().charAt(count) == 'U'){
+								 direction  = "North";	
+								}else if(best.get(0).getRoute().charAt(count) == 'D'){
+									direction = "South";
+								}else if(best.get(0).getRoute().charAt(count) == 'L'){
+									direction = "West";
+								}else{
+									direction = "East";
+								}
+								
+								doc.add(new Paragraph("- Go " + direction + " from " + mapL[Integer.parseInt(String.valueOf(best.get(0).getRoute().charAt(count+1)))][best.get(0).getRoute().charAt(count+2)]));
+								count += 3;
+							}
+							
+							doc.add(new Paragraph(" "));
+							doc.add(new Paragraph("------------------------------------------------------------------------------------"));
+							doc.add(new Paragraph(" "));
+							doc.add(new Paragraph("Delivery Information", header));
+							doc.add(new Paragraph("Deliver Time : " + dTicket.getEstimatedDelivery(), regular));
+							doc.add(new Paragraph("Deliver Destination : " + dTicket.getReceiver().getClientStreet() + " Street " + dTicket.getReceiver().getClientAve()));
+							doc.add(new Paragraph(" "));
+							doc.add(new Paragraph("Direction", header));
+							int countD = 0;
+							String directionD = null;
+							for(int i=0; i<=best.get(1).getRouteId().SIZE/3; i+=3){
+								if(best.get(1).getRoute().charAt(countD) == 'U'){
+								 directionD  = "North";	
+								}else if(best.get(1).getRoute().charAt(countD) == 'D'){
+									directionD = "South";
+								}else if(best.get(1).getRoute().charAt(countD) == 'L'){
+									directionD = "West";
+								}else{
+									directionD = "East";
+								}
+								
+								doc.add(new Paragraph("- Go " + directionD + " from " + mapL[Integer.parseInt(String.valueOf(best.get(1).getRoute().charAt(countD+1)))][best.get(1).getRoute().charAt(countD+2)]));
+								countD += 3;
+							}
+							
+							doc.close();
+							JOptionPane.showMessageDialog(frame, "PDF sucessfully created");
+						} catch (DocumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					   }
+				   else{
+					   JOptionPane.showMessageDialog(frame, "Ticket is Already Marked !");
+				   }
+				 }
+			}
+		});
 		btnGenereateRoute.setBackground(SystemColor.controlHighlight);
 		btnGenereateRoute.setForeground(new Color(128, 0, 0));
 		btnGenereateRoute.setFont(new Font("Tahoma", Font.PLAIN, 14));
